@@ -1,36 +1,12 @@
 import React, { Component } from 'react';
-import { Text, TextInput, View, Button, Alert } from 'react-native';
+import AuthorizationStack from './src/navigators/authStack';
 
-class App extends Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      email: '',
-      password: ''
-    };
-  }
-
-  render() {
+export default class App extends Component
+{
+  render()
+  {
     return (
-      <View>
-        <Text>Email:</Text>
-        <TextInput
-          value={this.state.email}
-          onChangeText={(email) => this.setState({ email })}
-        />
-        <Text>Password:</Text>
-        <TextInput
-          secureTextEntry={true}
-          value={this.state.password}
-          onChangeText={(password) => this.setState({ password })}
-        />
-        <Button
-          title="Log in"
-          onPress={() => login()}
-        />
-      </View>
+      <AuthorizationStack />
     );
   }
 }
-
-export default App;

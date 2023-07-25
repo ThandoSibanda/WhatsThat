@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "wtapp",
-    "slug": "wtapp",
+    "name": "WhatsThat",
+    "slug": "WhatsThat",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -24,7 +24,7 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/logo.png"
     }
   }
 }
