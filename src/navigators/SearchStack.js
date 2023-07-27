@@ -2,19 +2,17 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { Component } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 
-import ContactList from "../screens/ContactList";
-import ContactView from "../screens/ContactView";
-
+import SearchScreen from "../screens/ContactView";
 const ContactNav = createNativeStackNavigator();
 
 
-export default class ContactStack extends Component{
+export default class SearchStack extends Component{
 
   render(){
     return (
      
         <ContactNav.Navigator>
-          <ContactNav.Screen name="ContactList" component={ContactList}/>
+          <ContactNav.Screen name="Search" component={SearchScreen}/>
           <ContactNav.Screen name="ContactDetails" component={ContactView}/>
         </ContactNav.Navigator>
 

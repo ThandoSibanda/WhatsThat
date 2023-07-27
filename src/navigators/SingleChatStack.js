@@ -18,7 +18,7 @@ export default class SingleChatStack extends Component{
   render(){
     return (
 
-      <NavigationContainer>
+      
 
         <SingleChasNav.Navigator>
 
@@ -27,7 +27,7 @@ export default class SingleChatStack extends Component{
        
         </SingleChasNav.Navigator>
 
-      </NavigationContainer>
+      
       
     ); 
   }

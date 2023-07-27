@@ -1,30 +1,46 @@
-import React, {useState, useEffect} from 'react';
-
-import {View, Text, FlatList, TouchableOpacity, StyleSheet, TextInput, SafeAreaView} from 'react-native';
+import React, { Component } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+  SafeAreaView
+} from 'react-native';
 import PageHeader from '../components/PageHeader';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Header from '../components/PageHeader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ChatViewScreen = ({navigation, route, chatID, chatName}) => {
-  const {usersToken}= route.params;
-
-
-  const [newMessage, setNewMessage] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-
-  const sendMessage = () => {
-
+class ChatViewScreen extends Component {
+  state = {
+    newMessage: '',
+    message: '',
+    error: '',
+    isLoading: false
+    
   };
 
+  async componentDidMount() {
+    try {
+      const usersToken = await AsyncStorage.getItem('whatsthat_session_token');
+      this.setState({ usersToken }, () => {
+        this.getMessages();
+      });
+    } catch (error) {
+      console.error('Error retrieving token from AsyncStorage:', error);
+    }
+  }
 
-  const getMessages = async () => {
+  sendMessage = () => {
+    
+  };
+
+  getMessages = async () => {
+    const { isLoading, usersToken } = this.state;
     if (!isLoading) {
-      setIsLoading(true);
-
+      this.setState({ isLoading: true });
+      const { chatID } = this.props.route.params;
       try {
         const response = await fetch(`http://localhost:3333/api/1.0.0/chat/${chatID}`, {
           method: 'GET',
@@ -35,7 +51,7 @@ const ChatViewScreen = ({navigation, route, chatID, chatName}) => {
         });
         if (response.status === 200) {
           const rJson = await response.json();
-          setMessage(rJson);
+          this.setState({ message: rJson });
         } else if (response.status === 401) {
           throw 'Unauthroised request. Please try and sign in ';
         } else if (response.status === 403) {
@@ -44,70 +60,50 @@ const ChatViewScreen = ({navigation, route, chatID, chatName}) => {
           throw 'Server error. Please try again later';
         }
       } catch (error) {
-        setError(error);
+        this.setState({ error });
       } finally {
-        setIsLoading(false);
+        this.setState({ isLoading: false });
       }
     }
   };
 
-  useEffect(() => {
-    getMessages();
-  }, [chatID, usersToken]);
+  render() {
+    const { chatName } = this.props;
+    const { newMessage, message, isLoading } = this.state;
 
-
-  return (
-
-
-    <SafeAreaView style={styles.container}>
-
-
-      <PageHeader
-        title={chatName} ></PageHeader>
-      <FlatList
-
-        data={message.messages}
-        keyExtractor={(item) => item.message_id.toString()}
-        renderItem={({item}) => (
-
-          <View style={styles.messageContainer}>
-
-            <Text style={styles.nameText}>{item.author.first_name} {item.author.last_name}</Text>
-
-
-            <View style={item.author.user_id === userId ? styles.myMessage : styles.otherMessage}>
-
-              <Text style={styles.messageText}>{item.message}</Text>
-
+    return (
+      <SafeAreaView style={styles.container}>
+        <PageHeader title={chatName} />
+        <FlatList
+          data={message.messages}
+          keyExtractor={(item) => item.message_id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.messageContainer}>
+              <Text style={styles.nameText}>
+                {item.author.first_name} {item.author.last_name}
+              </Text>
+              <View style={item.author.user_id === userId ? styles.myMessage : styles.otherMessage}>
+                <Text style={styles.messageText}>{item.message}</Text>
+              </View>
             </View>
-
-          </View>
-
-        )}
-
-      />
-
-      <View style={styles.inputContainer}>
-
-        <TextInput
-          style={styles.input}
-          placeholder="Message"
-          value={newMessage}
-          onChangeText={(text) => setNewMessage(text)}
+          )}
         />
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Message"
+            value={newMessage}
+            onChangeText={(text) => this.setState({ newMessage: text })}
+          />
+          <TouchableOpacity style={styles.sendButton}>
+            <Icon name="paper-plane" size={18} color="white" />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+}
 
-        <TouchableOpacity style={styles.sendButton}>
-          <Icon name="paper-plane" size={18} color="white" />
-        </TouchableOpacity>
-
-      </View>
-
-
-    </SafeAreaView>
-
-
-  );
-};
 
 
 const styles = StyleSheet.create({

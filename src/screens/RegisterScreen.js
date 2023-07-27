@@ -74,7 +74,7 @@ const Register = () => {
           })
           .then((response) => {
             if (response.status === 201) {
-              console.log('this works');
+              this.props.navigation.navigate('login')
               return response.json();
             
             } else if (response.status === 400) {
@@ -84,7 +84,7 @@ const Register = () => {
             }
           })
           .then((rJson) => {
-            setError('User added successfully');
+            
             setSubmitted(false);
           })
           .catch((error) => {

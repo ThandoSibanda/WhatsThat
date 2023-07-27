@@ -23,7 +23,7 @@ export default class ChatListScreen extends Component {
         },
       });
 
-      if (response.status === 200) {
+      if (response.status >=200 && response.status<300) {
         const rJson = await response.json();
         this.setState({ chats: rJson }); 
       } else if (response.status === 403) {

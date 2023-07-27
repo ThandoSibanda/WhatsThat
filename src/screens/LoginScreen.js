@@ -15,7 +15,7 @@ export default class LoginScreen extends Component {
   }
 
   onPressButton = () => {
-    const { email, password, isLoading } = this.state; // Destructure email, password, isLoading from state
+    const { email, password, isLoading } = this.state;
 
     if (isLoading) {
       return;
@@ -59,7 +59,7 @@ export default class LoginScreen extends Component {
           await AsyncStorage.setItem('whatsthat_user_id', rJson.id);
           await AsyncStorage.setItem('whatsthat_session_token', rJson.token);
           console.log('Login Successful');
-          this.props.navigation.navigate('MainApp'); // Corrected navigation
+          this.props.navigation.navigate('main');
         } catch {
           throw new Error('Error: Failed to get Session Token');
         }
@@ -73,7 +73,7 @@ export default class LoginScreen extends Component {
   checkLoggedIn = async () => {
     const value = await AsyncStorage.getItem('whatsthat_session_token');
     if (value != null) {
-      this.props.navigation.navigate('MainApp'); // Corrected navigation
+      this.props.navigation.navigate('main');
     }
   };
 
@@ -109,8 +109,8 @@ export default class LoginScreen extends Component {
             <Text style={styles.buttonText}>{isLoading ? 'Logging in...' : 'Log in'}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.registerButton} onPress={() => this.props.navigation.navigate('Register')}>
-            <Text style={styles.registerButtonText}>Register</Text>
+          <TouchableOpacity style={styles.registerButton} onPress={() => this.props.navigation.navigate('signup')}>
+            <Text style={styles.registerButtonText}>Need an account?</Text>
           </TouchableOpacity>
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}

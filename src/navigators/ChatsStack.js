@@ -14,7 +14,7 @@ export default class ChatsStack extends Component{
 
   render(){
     return (
-      <NavigationContainer>
+     
         <ChatsNav.Navigator>
         <ChatsNav.Screen name='ChatList' component={ChatListScreen} />
         <ChatsNav.Screen name='SingleChat' component={SingleChatStack}/>
@@ -22,7 +22,7 @@ export default class ChatsStack extends Component{
        
       </ChatsNav.Navigator>
 
-      </NavigationContainer>
+      
       
     );
     }
