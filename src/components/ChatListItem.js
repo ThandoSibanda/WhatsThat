@@ -1,15 +1,32 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import React, { Component } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ChatListItem = ({navigate, chat_id, chat_name, message, author_id, first_name, last_name, timestamp}) => {
-  const [userId, setUserId] = useState(null);
-  const [authorName, setAuthorName] = useState('');
+class ChatListItem extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      userId: null,
+      authorName: '',
+      chat_id: '',
+      navigationTool: '',
+    };
+  }
+
+  componentDidMount() {
+    this.checkUser(this.props.author_id);
+  }
+
+  
+
+  getTimeDiff = (timestamp) => {
 
 
-  const getTimeDiff = (timestamp) => {
+    if (!timestamp) {
+      return "New chat"
+    }
     const currentTime = new Date().getTime();
-    const Diff = currentTime - (timestamp * 1000);
+    const Diff = currentTime - timestamp;
 
     const seconds = Math.floor(Diff / 1000);
     const minutes = Math.floor(seconds / 60);
@@ -27,7 +44,7 @@ const ChatListItem = ({navigate, chat_id, chat_name, message, author_id, first_n
     }
   };
 
-  const getID = async () => {
+  getID = async () => {
     try {
       const token = await AsyncStorage.getItem('whatsthat_user_id');
       return token;
@@ -36,44 +53,42 @@ const ChatListItem = ({navigate, chat_id, chat_name, message, author_id, first_n
     }
   };
 
-  const checkUser = async (author_id) => {
+  checkUser = async (author_id) => {
     try {
-      const id = await getID();
-      if (getID()=== author_id) {
-        setAuthorName('You');
+      const id = await this.getID();
+      if (id === author_id) {
+        this.setState({ authorName: 'You' });
       } else {
-        setAuthorName(`${first_name} ${last_name}` );
+        this.setState({ authorName: `${this.props.first_name} ${this.props.last_name}` });
       }
     } catch (error) {
-      setAuthorName('Unknown');
-      return;
+      this.setState({ authorName: 'Unknown' });
     }
   };
 
-  useEffect(() => {
-    checkUser(author_id);
-  }, [author_id]);
 
-  return (
+  
 
+  render() {
+  const { chat_name, message, timestamp, navigationTool, chat_id } = this.props;
+  const { authorName } = this.state;
 
-    <TouchableOpacity style={styles.container} onPress={navigate('ChatViewScreeen', ({chatID: chat_id}) )}>
+    return (
+      <TouchableOpacity style={styles.container} onPress={() => navigationTool(chat_id)}>
+        <View style={styles.chatContainer}>
+          <Text style={styles.title}>{chat_name}</Text>
+          <Text style={styles.summary}>
+          { (authorName !== 'Unknown' && authorName.trim() !== '') ? `${authorName}: ${message}` : message }
+          </Text>
+        </View>
 
-      <View style={styles.chatContainer}>
-        <Text style={styles.title}>{chat_name}</Text>
-        <Text style={styles.summary}>{authorName}:{message}</Text>
-      </View>
-
-      <View style={styles.timeContainer}>
-        <Text style={styles.timeText}>{getTimeDiff(timestamp)}</Text>
-      </View>
-
-
-    </TouchableOpacity>
-
-  );
-};
-
+        <View style={styles.timeContainer}>
+          <Text style={styles.timeText}>{this.getTimeDiff(timestamp)}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+}
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -83,7 +98,6 @@ const styles = StyleSheet.create({
     margin: 5,
     backgroundColor: '#f1f1f1',
     borderRadius: 10,
-
   },
 
   chatContainer: {
@@ -95,6 +109,7 @@ const styles = StyleSheet.create({
     color: 'purple',
     fontSize: 18,
   },
+
   summary: {
     color: '#333',
     fontSize: 12,
@@ -109,6 +124,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 });
-
 
 export default ChatListItem;

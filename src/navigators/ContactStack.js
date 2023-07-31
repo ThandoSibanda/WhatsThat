@@ -13,7 +13,13 @@ export default class ContactStack extends Component{
   render(){
     return (
      
-        <ContactNav.Navigator>
+        <ContactNav.Navigator
+          screenOptions={{
+            headerShown: false,
+            initialRouteName: 'ContactList'
+          }}
+        >
+          
           <ContactNav.Screen name="ContactList" component={ContactList}/>
           <ContactNav.Screen name="ContactDetails" component={ContactView}/>
         </ContactNav.Navigator>

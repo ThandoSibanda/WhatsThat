@@ -1,7 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { Component } from 'react';
 import { SafeAreaView, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+
 import ChatListItem from '../components/ChatListItem';
+import PageHeader from '../components/PageHeader';
 
 export default class ChatListScreen extends Component {
   constructor(props) {
@@ -22,7 +24,7 @@ export default class ChatListScreen extends Component {
           'X-Authorization': await AsyncStorage.getItem('whatsthat_session_token'),
         },
       });
-
+ 
       if (response.status >=200 && response.status<300) {
         const rJson = await response.json();
         this.setState({ chats: rJson }); 
@@ -38,31 +40,52 @@ export default class ChatListScreen extends Component {
     }
   }
 
+  handleNewChatIconPress = () => {
+    this.navigation.navigate('')
+  }
+
+  handleChatPress = (chat_id) => {
+    
+    return this.props.navigation.navigate('SingleChat', { chatID: chat_id});
+
+  };
+
   render() {
     const { chats } = this.state;
 
     return (
       <SafeAreaView style={{ flex: 1 }}>
+        <PageHeader
+          title="Chats"
+          icon="plus-square-o" 
+          onRightPress={this.handleNewChatIconPress} 
+        />
         <FlatList
+          
           style={styles.list}
           data={chats}
           keyExtractor={(item) => item.chat_id.toString()}
-          renderItem={({ item }) => (
-            <ChatListItem
-              chat_id={item.chat_id}
-              chat_name={item.name}
-              message={item.last_message.message}
-              author_id={item.last_message.author.user_id}
-              first_name={item.last_message.author.first_name}
-              last_message={item.last_message.author.last_name}
-              timestamp={item.last_message.timestamp}
-            />
-          )}
+          renderItem={({ item }) => {
+            const hasLastMessage = !!item.last_message.author;
+            return (
+              <ChatListItem
+                chat_id={item.chat_id}
+                chat_name={item.name}
+                message={hasLastMessage ? item.last_message.message : ""}
+                author_id={hasLastMessage ? item.last_message.author.user_id : ""}
+                first_name={hasLastMessage ? item.last_message.author.first_name : ""}
+                last_name={hasLastMessage ? item.last_message.author.last_name : ""}
+                timestamp={hasLastMessage ? item.last_message.timestamp : ""}
+                navigationTool={this.handleChatPress}
+              />
+            );
+          }}
         />
       </SafeAreaView>
     );
   }
 }
+
 
 const styles = StyleSheet.create({
   container: {

@@ -1,31 +1,38 @@
-import React from 'react';
-import {View, Text, Image, StyleSheet, SafeAreaView} from 'react-native';
+import React, { Component } from 'react';
+import { View, Text, Image, StyleSheet, SafeAreaView,} from 'react-native';
 
-const SearchScreen = ({route}) => {
+class ContactView extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      first_name: props.route.params.first_name,
+      last_name: props.route.params.last_name,
+      email: props.route.params.email,
+    };
+  }
+
+
   
 
-  return (
+  render() {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.userContainer}>
+          <Image
+            source={require('../../src/assets/images/defaultDP.jpeg')}
+            style={styles.image}
+          />
+          <Text style={styles.name}>{this.state.first_name} {this.state.last_name}</Text>
+        </View>
 
-
-    <SafeAreaView style={styles.container}>
-
-
-      <View style={styles.userContainer}>
-        <Image
-          source={require('../../src/assets/images/defaultDP.jpeg')}
-          style={styles.image}
-        />
-        <Text style={styles.name}>{first_name} {last_name}</Text>
-      </View>
-
-      <View style={styles.emailBox}>
-        <Text style={styles.Text}> Email:</Text>
-
-        <Text style={styles.emailText}> {email}</Text>
-      </View>
-    </SafeAreaView>
-  );
-};
+        <View style={styles.emailBox}>
+          <Text style={styles.Text}>Email:</Text>
+          <Text style={styles.emailText}>{this.state.email}</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -39,7 +46,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     margin: 50,
-
   },
   image: {
     width: 100,
@@ -67,4 +73,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SearchScreen;
+export default ContactView;

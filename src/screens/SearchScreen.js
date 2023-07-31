@@ -1,85 +1,101 @@
-import {placeholder} from 'i18n-js';
-import { useState } from 'react';
-import {TextInput} from 'react-native-web';
+import React, { Component } from 'react';
+import { SafeAreaView, TextInput, FlatList, View, StyleSheet, TouchableOpacity } from 'react-native';
+import ContactListItem from '../components/contactListItem';
+import PageHeader from '../components/PageHeader';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+class SearchScreen extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      search: '',
+      isLoading: false,
+      users: [],
+      error: '',
+    };
+  }
 
 
-const SearchScreen = ({navigation, route}) => {
-  const {usersToken} =route.params;
-  const [text, setText] = useState();
-  const [users, setUsers] = useState([]);
-  const [error, setError] = useState('');
-  const [sessionToken, setSessionToken] = useState(null);
-  const [isLoading, setIsLoading]= useState(false);
 
-  useEffect(() =>{
-    setSessionToken(usersToken);
-  }, [usersToken]);
 
-  const getUsers = async (input) => {
-    if (!isLoading) {
+
+  getUsers = async (name) => {
+    if (!this.state.isLoading) {
       try {
-        setIsLoading(true);
+        this.setState({ isLoading: true });
 
-        const response = await fetch(`http://localhost:3333/api/1.0.0/search?q=${input}&search_in=all&limit=10&offset=0`, {
+        const response = await fetch(`http://localhost:3333/api/1.0.0/search?q=${name}&search_in=all&limit=20&offset=0`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'X-Authorization': usersToken,
+            'X-Authorization': await AsyncStorage.getItem('whatsthat_session_token'),
           },
         });
 
         if (response.status === 200) {
           const rJson = await response.json();
-          setUsers(rJson);
+          this.setState({ users: rJson });
         } else if (response.status === 401) {
           throw 'Unauthorised Request';
         } else if (response.status === 500) {
           throw 'Server Error';
         }
       } catch (error) {
-        setError('Error: ' + error);
+        this.setState({ error: 'Error: ' + error });
       } finally {
-        setIsLoading(false);
+        this.setState({ isLoading: false });
       }
     }
   };
 
-  
 
+  render() {
+    const { navigation } = this.props;
+    const { sessionToken, users } = this.state;
 
-  return (
-    <SafeAreaView style={styles.container}>
-
- 
-      <TextInput style={styles.input} placeholder="Search" onChangeText={(input) =>{ setText(input); getUsers(text)  }}></TextInput>
+    return (
+      <SafeAreaView style={styles.container}>
+        <PageHeader
+          title="Search"
+          
+        />
+      <TextInput 
+        style={styles.input} 
+        placeholder="Search" 
+        onChangeText={async (input) => {
+          this.setState({ search: input });
+          await this.getUsers(input);
+        }}
+      ></TextInput>
 
 
       <FlatList
-
-        keyExtractor={(item) => item.user_id.toString()}
-        data={users}
-        renderItem={({item}) =>(
-          <View style={styles.listItem}>
-
-            <ContactListItem
-              id={item.user_id}
-              firstname={item.first_name}
-              surname={item.last_name}
-              onPress ={() => navigation.navigate('ContactDetails', item)}
-            />
-
-          </View>
-        )}
-      />
-    </SafeAreaView>
-  );
-};
+          keyExtractor={(item) => item.user_id.toString()}
+          data={users}
+          renderItem={({ item }) => (
+            <View style={styles.listItem}>
+              
+                <ContactListItem
+                  userID={item.user_id}
+                  sessionToken={sessionToken}
+                  firstname={item.first_name}
+                  surname={item.last_name}
+                />
+              
+              
+            </View>
+          )}
+        />
+      </SafeAreaView>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    justifyContent: 'center',
+    
   },
   listItem: {
     marginTop: 3,

@@ -3,6 +3,8 @@ import { FlatList, View, StyleSheet, SafeAreaView } from 'react-native-web';
 import ContactListItem from '../components/contactListItem';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import PageHeader from '../components/PageHeader';
+
 class ContactList extends Component {
   state = {
     contacts: [],
@@ -21,6 +23,11 @@ class ContactList extends Component {
       console.error('Error retrieving token from AsyncStorage:', error);
     }
   }
+
+  handleHeaderIconPress = () => {
+
+    console.log('View Chat Details Pressed');
+  };
 
   fetchContacts = async () => {
     const { isLoading, sessionToken } = this.state;
@@ -51,23 +58,34 @@ class ContactList extends Component {
     }
   };
 
+ 
+
   render() {
     const { navigation } = this.props;
     const { contacts, isLoading } = this.state;
 
     return (
       <SafeAreaView style={styles.container}>
+
+
+        <PageHeader
+          title="Contacts"
+          icon="plus-square-o"
+          onPress={this.handleHeaderIconPress}
+
+        />
         <FlatList
           keyExtractor={(item) => item.user_id.toString()}
           data={contacts}
           renderItem={({ item }) => (
             <View style={styles.listItem}>
               <ContactListItem
-                id={item.user_id}
-                firstname={item.first_name}
-                surname={item.last_name}
-                onPress={() => navigation.navigate('ContactDetails', item)}
-              />
+              userID={item.user_id}
+              sessionToken={sessionToken}
+              firstname={item.first_name}
+              surname={item.last_name}
+              onPress={() => navigation.navigate('ContactDetails', item)}
+            />
             </View>
           )}
         />

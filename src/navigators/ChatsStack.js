@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 
 import ChatListScreen from "../screens/ChatList";
-import SingleChatStack from "./SingleChatStack";
+import ChatViewScreen from "../screens/ChatViewScreen"
 
 
 
@@ -15,9 +15,15 @@ export default class ChatsStack extends Component{
   render(){
     return (
      
-        <ChatsNav.Navigator>
+        <ChatsNav.Navigator
+          screenOptions={{
+            headerShown: false,
+            initialRouteName: 'ChatList'
+          }}
+        >
+          
         <ChatsNav.Screen name='ChatList' component={ChatListScreen} />
-        <ChatsNav.Screen name='SingleChat' component={SingleChatStack}/>
+        <ChatsNav.Screen name='SingleChat' component={ChatViewScreen}/>
 
        
       </ChatsNav.Navigator>
