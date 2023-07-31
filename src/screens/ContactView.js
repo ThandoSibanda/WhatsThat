@@ -8,13 +8,63 @@ class ContactView extends Component {
       first_name: props.route.params.first_name,
       last_name: props.route.params.last_name,
       email: props.route.params.email,
+      userID : props.route.params.user_id,
     };
   }
 
-
+  blockUser = async () => {
+    try {
+      const response = await fetch(`http://localhost:3333/api/1.0.0/user/${this.userID}/block`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Authorization': await AsyncStorage.getItem('whatsthat_session_token'),
+        },
+      });
   
+      if (response.status >= 200 && response.status < 300) {
+        console.log('User blocked successfully');
+      } else if (response.status === 400) {
+        throw 'You cannot block yourself';
+      } else if (response.status === 401) {
+        throw 'Unauthorized Request';
+      } else if (response.status === 404) {
+        throw 'User not found';
+      } else if (response.status === 500) {
+        throw 'Server Error';
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
-  render() {
+  addContact = async () => {
+    try {
+      const response = await fetch(`http://localhost:3333/api/1.0.0/user/${this.userID}/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Authorization': await AsyncStorage.getItem('whatsthat_session_token'),
+        },
+      });
+  
+      if (response.status >= 200 && response.status < 300) {
+        console.log('Contact added successfully');
+      } else if (response.status === 400) {
+        throw 'You cannot add yourself as a contact';
+      } else if (response.status === 401) {
+        throw 'Unauthorized Request';
+      } else if (response.status === 404) {
+        throw 'User not found';
+      } else if (response.status === 500) {
+        throw 'Server Error';
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  ender() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.userContainer}>
@@ -29,10 +79,25 @@ class ContactView extends Component {
           <Text style={styles.Text}>Email:</Text>
           <Text style={styles.emailText}>{this.state.email}</Text>
         </View>
+
+        <TouchableOpacity style={styles.addBtn} onPress={this.addContact()}>
+          <Text style={styles.Text}>Add Contact</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.blockBtn} onPress={this.blockUser()}>
+          <Text style={styles.Text}>Block Contact</Text>
+        </TouchableOpacity>
+
       </SafeAreaView>
     );
   }
+
+
 }
+
+
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -70,6 +135,24 @@ const styles = StyleSheet.create({
   Text: {
     fontSize: 14,
     marginLeft: 15,
+  },
+
+    addBtn: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    padding: 5,
+    borderRadius: 5,
+  },
+
+  blockBtn: {
+    height: 40,
+    borderColor: 'red',
+    borderWidth: 1,
+    marginBottom: 10,
+    padding: 5,
+    borderRadius: 5,
   },
 });
 

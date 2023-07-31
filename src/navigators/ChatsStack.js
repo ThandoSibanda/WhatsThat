@@ -31,7 +31,7 @@ export default class ChatsStack extends Component{
       
       
     );
-    }
+  }
 
 
 

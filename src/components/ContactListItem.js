@@ -1,3 +1,5 @@
+// ContactListItem.js
+
 import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
@@ -27,53 +29,50 @@ class ContactListItem extends Component {
       this.setState({ profileImageUrl: '../../src/assets/images/defaultDP.jpeg' });
     });
   }
+  
 
   render() {
-    const { onPress, firstname, surname } = this.props;
+    const { firstname, surname } = this.props;
     const { profileImageUrl } = this.state;
 
     return (
-      <TouchableOpacity onPress={onPress}>
-        <View style={styles.container}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={profileImageUrl ? { uri: profileImageUrl } : require('../../src/assets/images/defaultDP.jpeg')}
-              style={styles.image}
-            />
-          </View>
-
-          <View style={styles.nameContainer}>
-            <Text style={styles.text}>{firstname} {surname}</Text>
-          </View>
+      <View style={styles.container}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={profileImageUrl ? { uri: profileImageUrl } : require('../../src/assets/images/defaultDP.jpeg')}
+            style={styles.image}
+          />
         </View>
-      </TouchableOpacity>
+
+        <View style={styles.nameContainer}>
+          <Text style={styles.text}>{firstname} {surname}</Text>
+        </View>
+      </View>
     );
   }
-
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     flexDirection: 'row',
-    margin: 10,
     alignItems: 'center',
   },
   imageContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 30,
     marginRight: 10,
-    overflow: 'hidden',
   },
   image: {
-    width: '100%',
-    height: '100%',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   nameContainer: {
-    margin: 10,
+    margin:50,
+
   },
   text: {
-    fontSize: 18,
+    fontSize: 20,
+    textcolor: "black",
   },
 });
 

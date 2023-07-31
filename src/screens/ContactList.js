@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, View, StyleSheet, SafeAreaView } from 'react-native-web';
+import { FlatList, View, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native-web';
 import ContactListItem from '../components/contactListItem';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -15,7 +15,7 @@ class ContactList extends Component {
 
   async componentDidMount() {
     try {
-      const usersToken = await AsyncStorage.getItem('usersToken');
+      const usersToken = await AsyncStorage.getItem('whatsthat_session_token');
       this.setState({ sessionToken: usersToken }, () => {
         this.fetchContacts();
       });
@@ -42,7 +42,7 @@ class ContactList extends Component {
           },
         });
 
-        if (response.status === 200) {
+        if (response.status >= 200 && response.status < 300) {
           const rJson = await response.json();
           this.setState({ contacts: rJson });
         } else if (response.status === 401) {
@@ -62,31 +62,29 @@ class ContactList extends Component {
 
   render() {
     const { navigation } = this.props;
-    const { contacts, isLoading } = this.state;
-
+    const { contacts, isLoading, sessionToken } = this.state;
+  
     return (
       <SafeAreaView style={styles.container}>
-
-
         <PageHeader
           title="Contacts"
           icon="plus-square-o"
           onPress={this.handleHeaderIconPress}
-
         />
         <FlatList
           keyExtractor={(item) => item.user_id.toString()}
           data={contacts}
           renderItem={({ item }) => (
-            <View style={styles.listItem}>
-              <ContactListItem
-              userID={item.user_id}
-              sessionToken={sessionToken}
-              firstname={item.first_name}
-              surname={item.last_name}
-              onPress={() => navigation.navigate('ContactDetails', item)}
-            />
-            </View>
+            <TouchableOpacity>
+              <ContactListItem 
+                userID={item.user_id} 
+                sessionToken={this.state.sessionToken}
+                firstname={item.first_name} 
+                surname={item.last_name} 
+              />
+
+            </TouchableOpacity>
+            
           )}
         />
       </SafeAreaView>
@@ -98,14 +96,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    justifyContent: 'center',
+    
   },
-  listItem: {
-    marginTop: 3,
-    backgroundColor: '#f8f8f8',
-    flex: 1,
-    borderRadius: 5,
-  },
+ 
+
   errorText: {
     color: 'red',
     marginTop: 10,
