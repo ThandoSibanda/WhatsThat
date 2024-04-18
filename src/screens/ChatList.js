@@ -41,7 +41,7 @@ export default class ChatListScreen extends Component {
   }
 
   handleNewChatIconPress = () => {
-    this.navigation.navigate('')
+    this.navigation.navigate('',)
   }
 
   handleChatPress = (chat_id) => {

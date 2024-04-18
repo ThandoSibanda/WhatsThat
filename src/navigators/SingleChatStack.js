@@ -28,6 +28,7 @@ export default class SingleChatStack extends Component{
         
 
          <SingleChatNav.Screen name='ChatViewScreen' component={ChatViewScreen} />
+         <SingleChatNav.Screen name='CreateChatScreen' component={CreateChatScreen} />
 
        
         </SingleChatNav.Navigator>
